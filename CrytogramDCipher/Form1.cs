@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace CrytogramDCipher
 {
-    public partial class Form1 : Form
+    public partial class MainWin : Form
     {
-        public Form1()
+        public MainWin()
         {
             InitializeComponent();
         }
