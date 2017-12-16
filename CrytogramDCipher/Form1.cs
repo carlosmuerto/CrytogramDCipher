@@ -7,14 +7,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace CrytogramDCipher
 {
     public partial class MainWin : Form
     {
+		private Criptograma Diccionario;
+
         public MainWin()
         {
+			this.Diccionario = new Criptograma();
             InitializeComponent();
-        }
+			this.Diccionario.AlfCode=1000;
+			Console.WriteLine(this.Diccionario.AlfCode);
+		}
     }
 }
