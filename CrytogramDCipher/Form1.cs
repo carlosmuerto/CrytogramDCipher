@@ -24,6 +24,8 @@ namespace CrytogramDCipher
 			this.textBoxAlfP.Text = this.Diccionario.AlfP;
 			this.textBoxAlfC.Text = this.Diccionario.AlfC;
 
+			this.checkBoxBrute.Checked = this.Diccionario.Brute;
+
 			this.textBoxCodNum.Text = this.Diccionario.AlfCode.ToString();
 		}
 
@@ -73,6 +75,44 @@ namespace CrytogramDCipher
 		private void ButtonDecifrado_Click(Object sender, EventArgs e)
 		{
 			this.textBoxOut.Text = this.Diccionario.Decifrar(this.textBoxIn.Text);
+		}
+
+		private void CheckBoxBrute_CheckedChanged(Object sender, EventArgs e)
+		{
+			//this.textBoxOut.Text = this.Diccionario.Cryptanalyst.Start(this.textBoxIn.Text);
+			this.Diccionario.Brute = this.checkBoxBrute.Checked;
+		}
+
+		private void ButtonCriptoAnal_Click(Object sender, EventArgs e)
+		{
+
+			Cursor.Current = Cursors.WaitCursor;
+
+			this.textBoxAlfC.Enabled = false;
+			this.textBoxCodNum.Enabled = false;
+			this.buttonCifrado.Enabled = false;
+			this.buttonDecifrado.Enabled = false;
+			this.buttonCriptoAnal.Enabled = false;
+			this.textBoxIn.Enabled = false;
+			this.textBoxAlfP.Enabled = false;
+			this.checkBoxBrute.Enabled = false;
+
+			//this.textBoxOut.Text = await this.Diccionario.Analist(this.textBoxIn.Text);
+
+			this.textBoxOut.Text = this.Diccionario.Analist(this.textBoxIn.Text);
+			this.textBoxCodNum.Text = this.Diccionario.AlfCode.ToString();
+
+			this.textBoxAlfC.Enabled = true;
+			this.textBoxCodNum.Enabled = true;
+			this.buttonCifrado.Enabled = true;
+			this.buttonDecifrado.Enabled = true;
+			this.buttonCriptoAnal.Enabled = true;
+			this.textBoxIn.Enabled = true;
+			this.textBoxAlfP.Enabled = true;
+			this.checkBoxBrute.Enabled = true;
+
+
+			Cursor.Current = Cursors.Default;
 		}
 	}
 }

@@ -5,14 +5,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
+using System.Reflection;
+using System.Resources;
+using System.IO;
+using System.Windows.Forms;
 
 namespace CrytogramDCipher
 {
 	class Criptograma
 	{
         
+
 		private Dictionary<Char, Char> _IndexAlfE;
 		private Dictionary<Char, Char> _IndexAlfD;
+
+		private Dictionary<Char, Char> _AlfTryTed;
+		private SortedSet<String> _SortedTxt;
+
+		private Dictionary<Char, Char> _IndexAlfA;
 
 		private String[] _Palabras;
 		private Dictionary<Int32, Int32> _HzIndex;
@@ -24,6 +34,8 @@ namespace CrytogramDCipher
 		private String _AlfC;
 
 		public String[] Palabras { get => this._Palabras; set => this._Palabras = value; }
+
+		private Boolean _Brute;
 
 		public BigInteger AlfCode
 		{
@@ -94,6 +106,7 @@ namespace CrytogramDCipher
 		public Dictionary<Int32, Int32> HzIndex { get => this._HzIndex; set => this._HzIndex = value; }
 
 		public String AlfP { get => this._AlfP; private set => this._AlfP = value; }
+
 		public String AlfC {
 			get => this._AlfC;
 			set {
@@ -116,6 +129,11 @@ namespace CrytogramDCipher
 				}
 			}
 		}
+
+		public Boolean Brute { get => this._Brute; set => this._Brute = value; }
+		public Dictionary<Char, Char> IndexAlfA { get => this._IndexAlfA; set => this._IndexAlfA = value; }
+		public Dictionary<Char, Char> AlfTryTed { get => this._AlfTryTed; set => this._AlfTryTed = value; }
+		public SortedSet<String> SortedTxt { get => this._SortedTxt; set => this._SortedTxt = value; }
 
 		public String Cifrar(String TextoPlano)
 		{
@@ -147,7 +165,7 @@ namespace CrytogramDCipher
 		}
 
 		public Criptograma()
-        {
+		{
 
 			this.IndexAlfE = new Dictionary<Char, Char>() {
 				{'A','A'},{'B','B'},{'C','C'},{'D','D'},{'E','E'},{'F','F'},
@@ -160,25 +178,115 @@ namespace CrytogramDCipher
 
 			this.AlfP = "";
 
-			foreach (KeyValuePair<Char, Char> Par in this.IndexAlfE)
-			{
+			this.AlfTryTed = new Dictionary<Char, Char>();
+			this.SortedTxt = new SortedSet<String>();
+
+			this.Brute = true;
+
+			foreach (KeyValuePair<Char, Char> Par in this.IndexAlfE) {
 				this.AlfP += Par.Key;
 			}
 			this.AlfC = this.AlfP;
 
-			String[] hzWords = System.IO.File.ReadAllLines(@"105words.txt");
+			String[] hzWords = Properties.Resources.w20k.Split(new[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-			this.Palabras = (String[]) hzWords.Clone();
+			for (Int32 i =0;i<hzWords.Length;++i) {
+				hzWords[i] = hzWords[i].ToUpper();
+			}
+
+			this.Palabras = (String[])hzWords.Clone();
 			Array.Sort(this.Palabras);
 
 			this.HzIndex = new Dictionary<Int32, Int32>();
-			
-			for (Int32 i = 0; i < hzWords.Length; ++i)
-			{
-				this.HzIndex.Add(i, Array.BinarySearch(this.Palabras,hzWords[i]));
+
+			for (Int32 i = 0; i < hzWords.Length; ++i) {
+				this.HzIndex.Add(i, Array.BinarySearch(this.Palabras, hzWords[i]));
 			}
 		}
-    }
+
+
+		private Boolean TyInSortedTxt()
+		{
+			while (false) {
+
+			}
+			if (true) {
+				return true;
+			} else {
+				// return false;
+			}
+		}
+
+		public String Analist( String TxtIn)
+		//public Task<String> Analist(String TxtIn)
+		{
+			// 	tryInSordTxt (iST){
+			// 		iDc = 0;
+			// 		While(tr = BuscarPalabra(iST,iDc)){
+			// 			si(Confirmar(tr)){
+			// 				UpAlfTryed(iST,tr);
+			// 				tryInSordTxt(++iTP);
+			// 			} else {
+			// 				iDc++;
+			// 			}
+			// 		}
+			// 		si ( iST>=SordTxt.lenght ){
+			// 			return true;
+			// 		} else {
+			// 			Descartar(Alf);
+			// 			return false;
+			// 		}
+			// 	}		
+			//return Task.Run(() => {
+				if (this.Brute) {
+					return BruteStr(TxtIn);
+				} else {
+					return TxtIn;
+				}
+			//});
+		}
+
+			
+
+		private String BruteStr(String TxtIn)
+		{
+			this.AlfCode = 0;
+			
+			String TxtOut = "";
+			for (Int32 i = 0; i < TxtIn.Length; ++i) {
+				if (this.IndexAlfE.TryGetValue(Char.ToUpper(TxtIn[i]), out Char temp)) {
+					TxtOut += temp;
+				} else {
+					TxtOut += " ";
+				}
+			}
+
+			String[] TxtOutSplited = TxtOut.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+
+			for (Int32 i = 0; i < TxtOutSplited.Length; ++i) {
+				this.SortedTxt.Add(TxtOutSplited[i]);
+			}
+
+			BigInteger Code;
+			for (Code = 0; Code < BigInteger.Parse("403291461126605635584000000") ; Code = BigInteger.Add(Code,BigInteger.One)) {
+				this.AlfCode = Code;
+				Int32 Count = 0;
+				for (Int32 pl = 0, c = this.SortedTxt.Count; pl < c; ++pl) {
+					if (this.Palabras.Contains(this.Decifrar(this.SortedTxt.ElementAt(pl))) ) {
+						Count++;
+					}
+				}
+				if (Count == this.SortedTxt.Count) {
+					break;
+				}
+			}
+			TxtOut = this.Decifrar(TxtIn);
+
+			return TxtOut;
+		}
+		
+
+	}
 }
 
 

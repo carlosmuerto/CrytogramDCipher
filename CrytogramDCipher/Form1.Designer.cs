@@ -43,6 +43,7 @@
 			this.buttonCifrado = new System.Windows.Forms.Button();
 			this.buttonDecifrado = new System.Windows.Forms.Button();
 			this.buttonCriptoAnal = new System.Windows.Forms.Button();
+			this.checkBoxBrute = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// textBoxIn
@@ -176,12 +177,25 @@
 			this.buttonCriptoAnal.TabIndex = 17;
 			this.buttonCriptoAnal.Text = "Criptoanálisis";
 			this.buttonCriptoAnal.UseVisualStyleBackColor = true;
+			this.buttonCriptoAnal.Click += new System.EventHandler(this.ButtonCriptoAnal_Click);
+			// 
+			// checkBoxBrute
+			// 
+			this.checkBoxBrute.AutoSize = true;
+			this.checkBoxBrute.Location = new System.Drawing.Point(373, 399);
+			this.checkBoxBrute.Name = "checkBoxBrute";
+			this.checkBoxBrute.Size = new System.Drawing.Size(86, 17);
+			this.checkBoxBrute.TabIndex = 18;
+			this.checkBoxBrute.Text = "Fuerza Bruta";
+			this.checkBoxBrute.UseVisualStyleBackColor = true;
+			this.checkBoxBrute.CheckedChanged += new System.EventHandler(this.CheckBoxBrute_CheckedChanged);
 			// 
 			// MainWin
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
 			this.ClientSize = new System.Drawing.Size(739, 423);
+			this.Controls.Add(this.checkBoxBrute);
 			this.Controls.Add(this.buttonCriptoAnal);
 			this.Controls.Add(this.buttonDecifrado);
 			this.Controls.Add(this.buttonCifrado);
@@ -221,6 +235,7 @@
         private System.Windows.Forms.Button buttonCifrado;
         private System.Windows.Forms.Button buttonDecifrado;
         private System.Windows.Forms.Button buttonCriptoAnal;
-    }
+		private System.Windows.Forms.CheckBox checkBoxBrute;
+	}
 }
 
