@@ -9,12 +9,53 @@ using System.Reflection;
 using System.Resources;
 using System.IO;
 using System.Windows.Forms;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
 namespace CrytogramDCipher
 {
-	class Criptograma
+	public static class Utiles // Copiado de https://geeks.ms/jvelasco/2011/01/23/c-implementar-la-interface-icloneable/
 	{
-        
+		/// <summary>
+		/// Permite una clonación en profundidad de origen
+		/// </summary>
+		/// <param name="origen">Objeto serializable</param>
+		/// <exception cref="ArgumentExcepcion">
+		/// Se produce cuando el objeto no es serializable.
+		/// </exception>
+		/// <remarks>Extraido de 
+		/// http://es.debugmodeon.com/articulo/clonar-objetos-de-estructura-compleja
+		/// </remarks>
+		public static T Copia<T>(T origen)
+		{
+			// Verificamos que sea serializable antes de hacer la copia            
+			if (!typeof(T).IsSerializable)
+				throw new ArgumentException("La clase " + typeof(T).ToString() + " no es serializable");
+
+			// En caso de ser nulo el objeto, se devuelve tal cual
+			if (Object.ReferenceEquals(origen, null))
+				return default(T);
+
+			//Creamos un stream en memoria            
+			IFormatter formatter = new BinaryFormatter();
+			Stream stream = new MemoryStream();
+			using (stream) {
+				try {
+					formatter.Serialize(stream, origen);
+					stream.Seek(0, SeekOrigin.Begin);
+					//Deserializamos la porcón de memoria en el nuevo objeto                
+					return (T)formatter.Deserialize(stream);
+				} catch (SerializationException ex) { throw new ArgumentException(ex.Message, ex); } catch { throw; }
+			}
+		}
+	}
+
+	[Serializable()]
+	class Criptograma : ICloneable
+	{
+
+		private Boolean MonoCore;
 
 		private Dictionary<Char, Char> _IndexAlfE;
 		private Dictionary<Char, Char> _IndexAlfD;
@@ -22,7 +63,7 @@ namespace CrytogramDCipher
 		private Dictionary<Char, Char> _AlfTryTed;
 		private SortedSet<String> _SortedTxt;
 
-		private Dictionary<Char, Char> _IndexAlfA;
+		private Dictionary<Char, Char> _IndexAlfA; // para uso del analyst
 
 		private String[] _Palabras;
 		private Dictionary<Int32, Int32> _HzIndex;
@@ -166,7 +207,7 @@ namespace CrytogramDCipher
 
 		public Criptograma()
 		{
-
+			this.MonoCore = true;
 			this.IndexAlfE = new Dictionary<Char, Char>() {
 				{'A','A'},{'B','B'},{'C','C'},{'D','D'},{'E','E'},{'F','F'},
 				{'G','G'},{'H','H'},{'I','I'},{'J','J'},{'K','K'},{'L','L'},
@@ -180,6 +221,7 @@ namespace CrytogramDCipher
 
 			this.AlfTryTed = new Dictionary<Char, Char>();
 			this.SortedTxt = new SortedSet<String>();
+
 
 			this.Brute = true;
 
@@ -204,7 +246,6 @@ namespace CrytogramDCipher
 			}
 		}
 
-
 		private Boolean TyInSortedTxt()
 		{
 			while (false) {
@@ -217,75 +258,122 @@ namespace CrytogramDCipher
 			}
 		}
 
-		public String Analist( String TxtIn)
-		//public Task<String> Analist(String TxtIn)
+		public async Task<String> AnalistAsync(String TxtIn)
 		{
-			// 	tryInSordTxt (iST){
-			// 		iDc = 0;
-			// 		While(tr = BuscarPalabra(iST,iDc)){
-			// 			si(Confirmar(tr)){
-			// 				UpAlfTryed(iST,tr);
-			// 				tryInSordTxt(++iTP);
-			// 			} else {
-			// 				iDc++;
-			// 			}
-			// 		}
-			// 		si ( iST>=SordTxt.lenght ){
-			// 			return true;
-			// 		} else {
-			// 			Descartar(Alf);
-			// 			return false;
-			// 		}
-			// 	}		
-			//return Task.Run(() => {
-				if (this.Brute) {
-					return BruteStr(TxtIn);
+
+			if (this.Brute) {
+				List<Task<BigInteger>> TaskList = new List<Task<BigInteger>>();
+				CancellationTokenSource tokenSource = new CancellationTokenSource();
+				Int32 Core;
+				if (this.MonoCore) {
+					Core = 1;
 				} else {
-					return TxtIn;
+					Core = Environment.ProcessorCount;
 				}
-			//});
+				for (Int32 i=0;i< Core; ++i) {
+					TaskList.Add(BruteStrAsync(TxtIn, i, Core, tokenSource.Token));
+				}
+
+
+				Task<BigInteger> resultTask = await Task.WhenAny(TaskList.ToArray());
+				tokenSource.Cancel();
+
+				this.AlfCode = resultTask.Result;
+				GC.Collect();
+				return this.Decifrar(TxtIn);
+			} else {
+				if (this.MonoCore) {
+					return await HzAttack(TxtIn);
+				} else {
+					throw new NotImplementedException();
+				}
+			}
 		}
 
-			
 
-		private String BruteStr(String TxtIn)
+
+		private async Task<String> HzAttack(String TxtIn)
 		{
-			this.AlfCode = 0;
-			
-			String TxtOut = "";
-			for (Int32 i = 0; i < TxtIn.Length; ++i) {
-				if (this.IndexAlfE.TryGetValue(Char.ToUpper(TxtIn[i]), out Char temp)) {
-					TxtOut += temp;
+			return await Task.Run(() => {
+				// 	tryInSordTxt (iST){
+				// 		iDc = 0;
+				// 		While(tr = BuscarPalabra(iST,iDc)){
+				// 			si(Confirmar(tr)){
+				// 				UpAlfTryed(iST,tr);
+				// 				tryInSordTxt(++iTP);
+				// 			} else {
+				// 				iDc++;
+				// 			}
+				// 		}
+				// 		si ( iST>=SordTxt.lenght ){
+				// 			return true;
+				// 		} else {
+				// 			Descartar(Alf);
+				// 			return false;
+				// 		}
+				// 	}		
+				return this.Decifrar(TxtIn);
+			});
+		}
+
+		private async Task<BigInteger> BruteStrAsync(String TxtIn, BigInteger start,BigInteger Steps, CancellationToken token)
+		{
+			return await Task.Run(() => {
+				Criptograma Fork;
+				if (!this.MonoCore) {
+					Fork = (Criptograma)this.Clone();
 				} else {
-					TxtOut += " ";
+					Fork = this;
 				}
-			}
 
-			String[] TxtOutSplited = TxtOut.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+				Fork.AlfCode = 0;
 
-			for (Int32 i = 0; i < TxtOutSplited.Length; ++i) {
-				this.SortedTxt.Add(TxtOutSplited[i]);
-			}
-
-			BigInteger Code;
-			for (Code = 0; Code < BigInteger.Parse("403291461126605635584000000") ; Code = BigInteger.Add(Code,BigInteger.One)) {
-				this.AlfCode = Code;
-				Int32 Count = 0;
-				for (Int32 pl = 0, c = this.SortedTxt.Count; pl < c; ++pl) {
-					if (this.Palabras.Contains(this.Decifrar(this.SortedTxt.ElementAt(pl))) ) {
-						Count++;
+				String TxtOut = "";
+				for (Int32 i = 0; i < TxtIn.Length; ++i) {
+					if (Fork.IndexAlfE.TryGetValue(Char.ToUpper(TxtIn[i]), out Char temp)) {
+						TxtOut += temp;
+					} else {
+						TxtOut += " ";
 					}
 				}
-				if (Count == this.SortedTxt.Count) {
-					break;
+
+				String[] TxtOutSplited = TxtOut.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+
+				for (Int32 i = 0; i < TxtOutSplited.Length; ++i) {
+					Fork.SortedTxt.Add(TxtOutSplited[i]);
 				}
-			}
-			TxtOut = this.Decifrar(TxtIn);
 
-			return TxtOut;
+				
+				for (BigInteger Code = start; Code < BigInteger.Parse("403291461126605635584000000"); Code = BigInteger.Add(Code, Steps)) {
+					try {
+						if (token.IsCancellationRequested) {
+							token.ThrowIfCancellationRequested();
+						}
+					} catch (OperationCanceledException) {
+						break;
+					}
+
+					Fork.AlfCode = Code;
+					Int32 Count = 0;
+					for (Int32 pl = 0, c = Fork.SortedTxt.Count; pl < c; ++pl) {
+						if (Fork.Palabras.Contains(Fork.Decifrar(Fork.SortedTxt.ElementAt(pl)))) {
+							Count++;
+						}
+					}
+					if (Count == Fork.SortedTxt.Count) {
+						break;
+					}
+				}
+				TxtOut = Fork.Decifrar(TxtIn);
+				//Console.WriteLine("task " + Steps.ToString());
+				return Fork.AlfCode;
+			}, token);
 		}
-		
 
+		public Object Clone()
+		{
+			return CrytogramDCipher.Utiles.Copia(this);
+		}
 	}
 }
 

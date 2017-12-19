@@ -83,7 +83,7 @@ namespace CrytogramDCipher
 			this.Diccionario.Brute = this.checkBoxBrute.Checked;
 		}
 
-		private void ButtonCriptoAnal_Click(Object sender, EventArgs e)
+		private async void ButtonCriptoAnal_ClickAsync(Object sender, EventArgs e)
 		{
 
 			Cursor.Current = Cursors.WaitCursor;
@@ -97,9 +97,7 @@ namespace CrytogramDCipher
 			this.textBoxAlfP.Enabled = false;
 			this.checkBoxBrute.Enabled = false;
 
-			//this.textBoxOut.Text = await this.Diccionario.Analist(this.textBoxIn.Text);
-
-			this.textBoxOut.Text = this.Diccionario.Analist(this.textBoxIn.Text);
+			this.textBoxOut.Text = await this.Diccionario.AnalistAsync(this.textBoxIn.Text);
 			this.textBoxCodNum.Text = this.Diccionario.AlfCode.ToString();
 
 			this.textBoxAlfC.Enabled = true;

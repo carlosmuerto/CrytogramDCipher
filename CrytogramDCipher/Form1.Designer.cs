@@ -177,7 +177,7 @@
 			this.buttonCriptoAnal.TabIndex = 17;
 			this.buttonCriptoAnal.Text = "Criptoanálisis";
 			this.buttonCriptoAnal.UseVisualStyleBackColor = true;
-			this.buttonCriptoAnal.Click += new System.EventHandler(this.ButtonCriptoAnal_Click);
+			this.buttonCriptoAnal.Click += new System.EventHandler(this.ButtonCriptoAnal_ClickAsync);
 			// 
 			// checkBoxBrute
 			// 
