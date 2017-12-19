@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Globalization;
 
 namespace CrytogramDCipher
 {
@@ -52,7 +53,7 @@ namespace CrytogramDCipher
 	}
 
 	[Serializable()]
-	class Criptograma : ICloneable
+	public class Criptograma : ICloneable
 	{
 
 		private Boolean MonoCore;
@@ -207,6 +208,7 @@ namespace CrytogramDCipher
 
 		public Criptograma()
 		{
+			
 			this.MonoCore = true;
 			this.IndexAlfE = new Dictionary<Char, Char>() {
 				{'A','A'},{'B','B'},{'C','C'},{'D','D'},{'E','E'},{'F','F'},
@@ -244,18 +246,8 @@ namespace CrytogramDCipher
 			for (Int32 i = 0; i < hzWords.Length; ++i) {
 				this.HzIndex.Add(i, Array.BinarySearch(this.Palabras, hzWords[i]));
 			}
-		}
 
-		private Boolean TyInSortedTxt()
-		{
-			while (false) {
-
-			}
-			if (true) {
-				return true;
-			} else {
-				// return false;
-			}
+			//PruebaExterna();
 		}
 
 		public async Task<String> AnalistAsync(String TxtIn)
@@ -283,38 +275,72 @@ namespace CrytogramDCipher
 				return this.Decifrar(TxtIn);
 			} else {
 				if (this.MonoCore) {
-					return await HzAttack(TxtIn);
+					throw new NotImplementedException();
+					//return await HzAttack(TxtIn);
 				} else {
 					throw new NotImplementedException();
 				}
 			}
 		}
 
+		//// 	tryInSordTxt (iST){
+		//// 		iDc = 0;
+		//// 		While(tr = BuscarPalabra(iST,iDc)){
+		//// 			si(Confirmar(tr)){
+		//// 				UpAlfTryed(iST,tr);
+		//// 				tryInSordTxt(++iTP);
+		//// 			} else {
+		//// 				iDc++;
+		//// 			}
+		//// 		}
+		//// 		si ( iST>=SordTxt.lenght ){
+		//// 			return true;
+		//// 		} else {
+		//// 			Descartar(Alf);
+		//// 			return false;
+		//// 		}
+		//// 	}
+
+		//private Boolean TyInSortedTxt(Int32 iST)
+		//{
+		//	Int32 iDc = 0;
+		//	String tr;
+		//	while (""!=(tr = BuscarPalabra(iST, iDc)) ) {
+
+		//	}
+		//	if (true) {
+		//		return true;
+		//	} else {
+		//		// return false;
+		//	}
+		//}
 
 
-		private async Task<String> HzAttack(String TxtIn)
-		{
-			return await Task.Run(() => {
-				// 	tryInSordTxt (iST){
-				// 		iDc = 0;
-				// 		While(tr = BuscarPalabra(iST,iDc)){
-				// 			si(Confirmar(tr)){
-				// 				UpAlfTryed(iST,tr);
-				// 				tryInSordTxt(++iTP);
-				// 			} else {
-				// 				iDc++;
-				// 			}
-				// 		}
-				// 		si ( iST>=SordTxt.lenght ){
-				// 			return true;
-				// 		} else {
-				// 			Descartar(Alf);
-				// 			return false;
-				// 		}
-				// 	}		
-				return this.Decifrar(TxtIn);
-			});
-		}
+		//private async Task<String> HzAttack(String TxtIn)
+		//{
+		//	return await Task.Run(() => {
+		//		this.AlfCode = 0;
+		//		String TxtOut = "";
+		//		for (Int32 i = 0; i < TxtIn.Length; ++i) {
+		//			if (this.IndexAlfE.TryGetValue(Char.ToUpper(TxtIn[i]), out Char temp)) {
+		//				TxtOut += temp;
+		//			} else {
+		//				TxtOut += " ";
+		//			}
+		//		}
+		//		String[] TxtOutSplited = TxtOut.Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+
+		//		for (Int32 i = 0; i < TxtOutSplited.Length; ++i) {
+		//			this.SortedTxt.Add(TxtOutSplited[i]);
+		//		}
+
+		//		Int32 iST = 0;
+
+		//		TyInSortedTxt(iST);
+
+		//		return this.Decifrar(TxtIn);
+		//	});
+		//}
 
 		private async Task<BigInteger> BruteStrAsync(String TxtIn, BigInteger start,BigInteger Steps, CancellationToken token)
 		{
@@ -374,6 +400,132 @@ namespace CrytogramDCipher
 		{
 			return CrytogramDCipher.Utiles.Copia(this);
 		}
+
+		/*
+		 * 
+		 * 
+		 * 
+		 */
+
+
+
+		//public void PruebaExterna()
+		//{
+			
+		//	//List<String> dict = new List<String> { "AAA","BBB","CCC","ABC"};
+		//	List<String> listEncryptedSentences = new List<String> { "BEST PEOPLE GO HOME" };
+		//	List<String> dict = this.Palabras.ToList<String>();
+		//	IEnumerable<String[]> listListWords = listEncryptedSentences.Select(encryptedSentence => encryptedSentence.Split(' '));
+
+		//	foreach (String[] listWords in listListWords) {
+		//		SolveAndPrint(dict, listWords);
+		//	}
+			
+		//}
+
+		//private static void SolveAndPrint(IEnumerable<String> dict, IEnumerable<String> encodedWords)
+		//{
+		//	IEnumerable<String> previousSolutions = new List<String>();
+		//	IList<String> totalSolutions = null;
+		//	String totalWordTillNow = String.Empty;
+
+		//	foreach (String encodedWord in encodedWords) {
+		//		IList<String> currentSolutions = GetMatchingStrings(dict, encodedWord);
+
+		//		totalWordTillNow += encodedWord;
+		//		totalSolutions = GetMatchingStrings(CrossJoin(previousSolutions, currentSolutions), totalWordTillNow);
+		//		previousSolutions = totalSolutions;
+		//	}
+
+		//	if (totalSolutions == null) {
+		//		totalSolutions = new List<String>();
+		//	}
+
+		//	String encodedString = String.Empty;
+		//	List<String> decodedStrings = totalSolutions.Select(solution => String.Empty).ToList();
+
+		//	foreach (String encodedWord in encodedWords) {
+		//		encodedString += encodedWord + " ";
+		//		for (Int32 i = 0; i < totalSolutions.Count; i++) {
+		//			decodedStrings[i] += " " + totalSolutions[i].Substring(0, encodedWord.Length);
+		//			totalSolutions[i] = totalSolutions[i].Substring(encodedWord.Length, totalSolutions[i].Length - encodedWord.Length);
+		//		}
+		//	}
+
+		//	foreach (String decodedString in decodedStrings) {
+		//		Console.WriteLine(encodedString + "=" + decodedString);
+		//	}
+		//}
+
+		//private static IList<String> GetMatchingStrings(IEnumerable<String> possibleWords, String word)
+		//{
+		//	IList<IEnumerable<Int32>> wordPattern = GetWordLettersPattern(word);
+
+		//	return possibleWords
+		//		.Where(possibleWord => CompareCounts(wordPattern, GetWordLettersPattern(possibleWord)))
+		//		.ToList();
+		//}
+
+		//private static IList<IEnumerable<Int32>> GetWordLettersPattern(String word)
+		//{
+		//	return word
+		//		.ToCharArray()
+		//		.Distinct()
+		//		.Select(letter => GetPositions(word, letter.ToString(CultureInfo.InvariantCulture)))
+		//		.ToList();
+		//}
+
+		//public static IEnumerable<Int32> GetPositions(String source, String searchString)
+		//{
+		//	List<Int32> ret = new List<Int32>();
+		//	Int32 len = searchString.Length;
+		//	Int32 start = -len;
+
+		//	while (true) {
+		//		start = source.IndexOf(searchString, start + len, StringComparison.InvariantCulture);
+		//		if (start == -1) {
+		//			return ret;
+		//		}
+
+		//		ret.Add(start);
+		//	}
+		//}
+
+		//public static Boolean CompareCounts(IList<IEnumerable<Int32>> left, IList<IEnumerable<Int32>> right)
+		//{
+		//	Boolean returnVal = true;
+
+		//	returnVal &= left.Count() == right.Count();
+		//	if (returnVal) {
+		//		for (Int32 i = 0; i < left.Count(); i++) {
+		//			returnVal &= left[i].Count() == right[i].Count();
+		//			if (!returnVal) {
+		//				return false;
+		//			}
+		//		}
+		//	}
+
+		//	return returnVal;
+		//}
+
+		//public static List<String> CrossJoin(IEnumerable<String> left, IEnumerable<String> right)
+		//{
+		//	List<String> returnVal = new List<String>();
+
+		//	if (!left.Any()) {
+		//		returnVal.AddRange(right);
+		//	} else if (!right.Any()) {
+		//		returnVal.AddRange(left);
+		//	} else {
+		//		foreach (String leftItem in left) {
+		//			String item = leftItem;
+
+		//			returnVal.AddRange(right.Select(rightItem => item + rightItem));
+		//		}
+		//	}
+
+		//	return returnVal;
+		//}
 	}
 }
 

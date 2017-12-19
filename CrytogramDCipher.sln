@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrytogramDCipher", "CrytogramDCipher\CrytogramDCipher.csproj", "{60ACD6C8-9973-4364-A3A4-E320177E1927}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CrytogramDCipher Unit Test", "Puerbas de Fuerza Bruta\CrytogramDCipher Unit Test.csproj", "{977FDAEC-F414-4F96-A690-BFD0550BD5F0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{60ACD6C8-9973-4364-A3A4-E320177E1927}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60ACD6C8-9973-4364-A3A4-E320177E1927}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60ACD6C8-9973-4364-A3A4-E320177E1927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{977FDAEC-F414-4F96-A690-BFD0550BD5F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{977FDAEC-F414-4F96-A690-BFD0550BD5F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{977FDAEC-F414-4F96-A690-BFD0550BD5F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{977FDAEC-F414-4F96-A690-BFD0550BD5F0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
